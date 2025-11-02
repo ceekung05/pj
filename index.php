@@ -174,8 +174,8 @@ $user = $_SESSION['user_data'];
                 </a>
             </div>
 
-            <!-- <div class="col-lg-6">
-                <a href="treatment_form.php" class="nav-card">
+            <div class="col-lg-6">
+                <a href="ward.php" class="nav-card">
                     <div class="icon-circle bg-icon-3">
                         <i class="fas fa-pills"></i>
                     </div>
@@ -196,7 +196,7 @@ $user = $_SESSION['user_data'];
                         <p class="mb-0 text-muted">บันทึกภาวะแทรกซ้อน และคะแนน MRS หลังการรักษา</p>
                     </div>
                 </a>
-            </div> -->
+            </div>
             <a href="logout.php" class="btn-logout">ออกจากระบบ</a>
         </div>
     </div>
