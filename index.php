@@ -29,9 +29,9 @@ $user = $_SESSION['user_data'];
     <title>หน้าหลัก - ระบบ Stroke Care</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    
     <style>
         /* Custom CSS เพื่อให้ได้สไตล์แบบในรูปตัวอย่าง
         */
@@ -165,39 +165,50 @@ $user = $_SESSION['user_data'];
             <div class="col-lg-6">
                 <a href="diagnosis_form.php" class="nav-card">
                     <div class="icon-circle bg-icon-2">
-                        <i class="fas fa-x-ray"></i>
+                        <i class="bi bi-hospital"></i>
                     </div>
                     <div>
-                        <h5>2. บันทึกการวินิจฉัย</h5>
+                        <h5>2. ER</h5>
                         <p class="mb-0 text-muted">บันทึกผล CT, MRI, และคะแนน ASPECTS/Collateral</p>
                     </div>
                 </a>
             </div>
 
             <div class="col-lg-6">
-                <a href="ward.php" class="nav-card">
+                <a href="OR_Procedure_Form.php" class="nav-card">
                     <div class="icon-circle bg-icon-3">
-                        <i class="fas fa-pills"></i>
+                        <i class="bi bi-scissors"></i>
                     </div>
                     <div>
-                        <h5>3. บันทึกการรักษา</h5>
+                        <h5>3. OR Procedure Form</h5>
                         <p class="mb-0 text-muted">บันทึกการให้ยา TT-PA, การทำ EVT, และการผ่าตัด</p>
                     </div>
                 </a>
             </div>
 
             <div class="col-lg-6">
-                <a href="followup_form.php" class="nav-card">
+                <a href="ward.php" class="nav-card">
                     <div class="icon-circle bg-icon-4">
-                        <i class="fas fa-chart-line"></i>
+                        <i class="bi bi-hospital"></i>
                     </div>
                     <div>
-                        <h5>4. บันทึกการติดตามผล</h5>
+                        <h5>4. ward</h5>
                         <p class="mb-0 text-muted">บันทึกภาวะแทรกซ้อน และคะแนน MRS หลังการรักษา</p>
                     </div>
                 </a>
             </div>
-            <a href="logout.php" class="btn-logout">ออกจากระบบ</a>
+            <div class="col-lg-6">
+                <a href="follow.php" class="nav-card">
+                    <div class="icon-circle bg-icon-4">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h5>5. Follow-up</h5>
+                        <p class="mb-0 text-muted">บันทึกภาวะแทรกซ้อน และคะแนน MRS หลังการรักษา</p>
+                    </div>
+                </a>
+            </div>
+            <a href="logout.php" class="btn-logout-danger">ออกจากระบบ</a>
         </div>
     </div>
 

@@ -1,22 +1,8 @@
 <?php
+// 1. [ต้องมี] เริ่ม session เพื่อ "ปลุก" ข้อมูลที่เก็บไว้
+session_start(); 
+$user = $_SESSION['user_data']; 
 
-// 1. เริ่ม session (ต้องอยู่อันแรกเสมอ)
-session_start();
-
-// 2. 🛡️ "ยาม" ตรวจสอบ
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: login.php");
-    exit;
-}
-
-// 3. 🧠 "ห้ามจำ" (Cache Control)
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-header("Expires: 0");
-
-// (ถ้าหน้านี้ต้องใช้ข้อมูลผู้ใช้ ก็ดึงมาได้เลย)
-// $user = $_SESSION['user_data'];
 ?>
 
 <!doctype html>
@@ -76,7 +62,7 @@ header("Expires: 0");
                 <span class="navbar-text text-white d-flex align-items-center">
                     <i class="fas fa-user-circle fa-2x me-3"></i>
                     <span>
-                        <strong>ชื่อ-สกุล:</strong> <?php echo "สุขใจ (ทดสอบ) ซ่อมไว"; ?>
+                        <strong>ชื่อ-สกุล:</strong> <?php echo htmlspecialchars($user['HR_FNAME']); ?>
                     </span>
                 </span>
             </div>
@@ -238,12 +224,75 @@ header("Expires: 0");
                             </div>
                         </div>
                     </div>
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white ">
+                            <h5 class="mb-0">7.ส่วนประเมินแรกรับ (Triage Assessment)</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form>
 
-                    <div class="text-center mt-5">
-                        <button type="submit" class="btn btn-primary btn-lg px-5">
-                            <i class="fas fa-save me-2"></i> บันทึกข้อมูล
-                        </button>
-                    </div>
+                                <h5 class="mt-2"> เวลา (Time)</h5>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="onsetTime" class="form-label">เวลาที่รถออกจากต้นทาง </label>
+                                        <input type="datetime-local" class="form-control" id="onsetTime">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="arrivalTime" class="form-label">เวลาที่ถึง รพ.</label>
+                                        <input type="datetime-local" class="form-control" id="arrivalTime">
+                                    </div>
+                                </div>
+
+                                <h5 class="mt-4"> อาการสำคัญ (Symptoms - F.A.S.T.)</h5>
+                                <div class="mb-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="sympDroop" value="face">
+                                        <label class="form-check-label" for="sympDroop">F</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="sympWeakness" value="arm">
+                                        <label class="form-check-label" for="sympWeakness">A</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="sympSpeech" value="speech">
+                                        <label class="form-check-label" for="sympSpeech">S</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="sympSpeech" value="speech">
+                                        <label class="form-check-label" for="sympSpeech">T</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="sympSpeech" value="speech">
+                                        <label class="form-check-label" for="sympSpeech">V</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="sympSpeech" value="speech">
+                                        <label class="form-check-label" for="sympSpeech">A</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="sympSpeech" value="speech">
+                                        <label class="form-check-label" for="sympSpeech">N</label>
+                                    </div>
+                                </div>
+
+                                <h5 class="mt-4"> การประเมินแรกรับ (Scores)</h5>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="gcs" class="form-label">GCS </label>
+                                        <input type="text" class="form-control" id="gcs" placeholder="">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="nihss" class="form-label">NIHSS </label>
+                                        <input type="number" class="form-control" id="nihss" placeholder="">
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="text-center mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-save me-2"></i> บันทึกข้อมูล
+                            </button>
+                        </div>
+
 
                 </form>
             </div>
