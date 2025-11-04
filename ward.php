@@ -168,6 +168,10 @@ $user = $_SESSION['user_data'];
         <div class="modal-body">
           <form id="wardEntryForm">
             <div class="mb-3">
+              <label for="modalSBP" class="form-label">วันที่/เวลา (Date/Time)</label>
+              <input type="datetime-local" class="form-control" id="modalSBP">
+            </div>
+            <div class="mb-3">
               <label for="modalSBP" class="form-label">SBP (ความดัน)</label>
               <input type="number" class="form-control" id="modalSBP">
             </div>

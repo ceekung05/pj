@@ -169,7 +169,7 @@ $user = $_SESSION['user_data'];
                     </div>
                     <div>
                         <h5>2. ER</h5>
-                        <p class="mb-0 text-muted">บันทึกผล CT, MRI, และคะแนน ASPECTS/Collateral</p>
+                        <p class="mb-0 text-muted">บันทึก "ผลลัพธ์" จากการสแกนสมอง และ "คะแนน" ที่อ่านได้จากภาพ</p>
                     </div>
                 </a>
             </div>
@@ -181,7 +181,7 @@ $user = $_SESSION['user_data'];
                     </div>
                     <div>
                         <h5>3. OR Procedure Form</h5>
-                        <p class="mb-0 text-muted">บันทึกการให้ยา TT-PA, การทำ EVT, และการผ่าตัด</p>
+                        <p class="mb-0 text-muted">"ฟอร์มบันทึกการรักษา" หรือ "ใบบันทึกหัตถการ/ผ่าตัด"</p>
                     </div>
                 </a>
             </div>
@@ -193,7 +193,7 @@ $user = $_SESSION['user_data'];
                     </div>
                     <div>
                         <h5>4. ward</h5>
-                        <p class="mb-0 text-muted">บันทึกภาวะแทรกซ้อน และคะแนน MRS หลังการรักษา</p>
+                        <p class="mb-0 text-muted">เป็น "Flowsheet เฝ้าระวัง" หรือ "ใบบันทึกข้างเตียง" แบบดิจิทัล</p>
                     </div>
                 </a>
             </div>

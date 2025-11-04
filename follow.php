@@ -4,14 +4,7 @@ session_start();
 $user = $_SESSION['user_data']; 
 
 ?>
-<!doctype html>
-<html lang="th">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>หน้าจำหน่ายและติดตามผล (Follow-up)</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
+<style>
     /* Custom CSS เพื่อให้ได้สไตล์แบบในรูปตัวอย่าง
         */
     .nav-card {
@@ -54,9 +47,7 @@ $user = $_SESSION['user_data'];
       font-size: 24px;
     }
   </style>
-</head>
-<body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm navbar-custom">
+  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm navbar-custom">
     <div class="container-fluid">
       <a class="navbar-brand" href="index.php">
         <i class="fas fa-brain me-2"></i>
@@ -72,6 +63,17 @@ $user = $_SESSION['user_data'];
       </div>
     </div>
   </nav>
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>หน้าจำหน่ายและติดตามผล (Follow-up)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+</head>
+<body class="bg-light">
+
   <div class="container my-5">
     <div class="row justify-content-center">
       <div class="col-lg-10">
@@ -150,7 +152,130 @@ $user = $_SESSION['user_data'];
       </div>
     </div>
   </div>
-
+    <div class="modal fade" id="editMrsModal" tabindex="-1" aria-labelledby="editMrsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editMrsModalLabel">บันทึกคะแนน mRS</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="mrsEntryForm">
+            <div class="mb-3">
+              <label for="mrsScoreSelect" class="form-label">เลือกคะแนน mRS (0-6)</label>
+              <select class="form-select" id="mrsScoreSelect">
+                <option value="0">0 - ไม่มีอาการ</option>
+                <option value="1">1 - มีอาการแต่ไม่กระทบ</option>
+                <option value="2">2 - พิการเล็กน้อย</option>
+                <option value="3">3 - พิการปานกลาง</option>
+                <option value="4">4 - พิการค่อนข้างรุนแรง</option>
+                <option value="5">5 - พิการรุนแรง</option>
+                <option value="6">6 - เสียชีวิต</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+          <button type="button" class="btn btn-primary" id="saveMrsScore">บันทึก</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // --- ส่วนที่ 1: สร้างนัดอัตโนมัติ (ปุ่ม "สร้างนัดอัตโนมัติ") ---
+      
+      const createButton = document.getElementById('autoCreateAppointments');
+      const dischargeDateInput = document.getElementById('dischargeDate');
+      const tableBody = document.getElementById('followupTableBody');
+      
+      createButton.addEventListener('click', function () {
+        const startDate = dischargeDateInput.value;
+        
+        // 1. ตรวจสอบว่าเลือกวันที่หรือยัง
+        if (!startDate) {
+          alert('กรุณาเลือก "วันที่จำหน่าย" ก่อนครับ');
+          return;
+        }
+        
+        // 2. ล้างตารางเก่า (ถ้ามี)
+        tableBody.innerHTML = '';
+        
+        const baseDate = new Date(startDate);
+        const intervals = [1, 3, 6, 12]; // mRS 1, 3, 6, 12 เดือน
+
+        // 3. วนลูปสร้างแถว 4 แถว
+        intervals.forEach(months => {
+          // คำนวณวันที่ในอนาคต
+          const futureDate = new Date(baseDate);
+          futureDate.setMonth(futureDate.getMonth() + months);
+          
+          // แปลงเป็นรูปแบบ "วัน/เดือน/ปี"
+          const formattedDate = futureDate.toLocaleDateString('th-TH');
+          const label = `mRS ${months} เดือน`;
+
+          // 4. สร้าง HTML สำหรับแถวใหม่
+          const newRowHTML = `
+            <tr>
+              <td data-label="${label}"><strong>${label}</strong></td>
+              <td>${formattedDate}</td>
+              <td><span class="badge bg-warning">รอนัด</span></td>
+              <td class="mrs-score-cell">(ว่าง)</td>
+              <td>
+                <button type="button" class="btn btn-primary btn-sm edit-mrs-btn" data-bs-toggle="modal" data-bs-target="#editMrsModal">
+                  บันทึกคะแนน
+                </button>
+              </td>
+            </tr>
+          `;
+          
+          // 5. เพิ่มแถวใหม่ลงในตาราง
+          tableBody.innerHTML += newRowHTML;
+        });
+      });
+
+
+      // --- ส่วนที่ 2: บันทึกคะแนน mRS (ปุ่ม "บันทึกคะแนน") (เหมือนเดิม) ---
+      
+      const editMrsModal = new bootstrap.Modal(document.getElementById('editMrsModal'));
+      const modalElement = document.getElementById('editMrsModal');
+      const saveMrsButton = document.getElementById('saveMrsScore');
+      let currentRowToUpdate = null;
+
+      tableBody.addEventListener('click', function (event) {
+        if (event.target.classList.contains('edit-mrs-btn')) {
+          currentRowToUpdate = event.target.closest('tr'); 
+          const label = currentRowToUpdate.querySelector('td[data-label]').innerText;
+          modalElement.querySelector('.modal-title').innerText = `บันทึกคะแนน: ${label}`;
+        }
+      });
+
+      saveMrsButton.addEventListener('click', function () {
+        if (!currentRowToUpdate) return; 
+
+        const selectedScoreText = document.getElementById('mrsScoreSelect').options[document.getElementById('mrsScoreSelect').selectedIndex].text;
+
+        const scoreCell = currentRowToUpdate.querySelector('.mrs-score-cell');
+        scoreCell.innerText = selectedScoreText; 
+        scoreCell.style.fontWeight = 'bold';
+
+        const statusCell = currentRowToUpdate.querySelector('td span.badge');
+        statusCell.innerText = 'เสร็จสิ้น';
+        statusCell.classList.remove('bg-warning'); 
+        statusCell.classList.add('bg-success');   
+
+        const editButton = currentRowToUpdate.querySelector('.edit-mrs-btn');
+        editButton.disabled = true;
+        editButton.innerText = 'บันทึกแล้ว';
+
+        editMrsModal.hide();
+        currentRowToUpdate = null;
+      });
+
+    });
+  </script>
 </body>
 </html>
