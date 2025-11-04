@@ -65,9 +65,9 @@ header("Expires: 0");
 </head>
 
 <body>
-    <div class="container col-md-4">
-        <div class="row justify-content-center">
-                <div class="card shadow-sm border-0">
+    <div class="container col-md-4 ">
+        <div class="row justify-content-center ">
+                <div class="card shadow-sm border-0 bg-info-subtle text-info-emphasis ">
                     <div class="card-body p-4 p-md-5 ">
 
                         <h1 class="text-center mb-4">Login</h1>
@@ -91,7 +91,7 @@ header("Expires: 0");
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-info btn-outline-info btn-lg text-dark ">
                                     Login
                                 </button>
                             </div>
