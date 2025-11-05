@@ -1,0 +1,169 @@
+/* 1. Base and Fonts */
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+h1, h2, h3, h4, h5, h6, .section-title, .sidebar span {
+    font-weight: 600;
+}
+
+/* 2. Sidebar */
+.sidebar {
+    height: 100%;
+    width: 280px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    overflow-x: hidden;
+    padding-top: 20px;
+    border-right: 1px solid #dee2e6;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.sidebar-header {
+    padding: 10px 25px;
+    text-align: left;
+    font-size: 1.5rem;
+    color: #4a559d; /* สีจาก navbar-custom เดิม */
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
+
+.sidebar-header i {
+    font-size: 1.8rem;
+    margin-right: 15px;
+}
+
+.sidebar a {
+    padding: 12px 25px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #444;
+    display: block;
+    transition: 0.3s;
+    border-left: 4px solid transparent;
+}
+
+.sidebar a i {
+    margin-right: 12px;
+    width: 20px; /* ทำให้ไอคอนเรียงตรงกัน */
+    text-align: center;
+}
+
+.sidebar a:hover {
+    background-color: #f1f1f1;
+    color: #000;
+    border-left: 4px solid #4a559d;
+}
+
+/* [ใหม่] สไตล์สำหรับลิงก์ที่ Active */
+.sidebar a.active {
+    background-color: #e9eaf2;
+    color: #4a559d;
+    font-weight: 600;
+    border-left: 4px solid #4a559d;
+}
+
+.sidebar .sidebar-divider {
+    margin: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+/* 3. Main Content Area */
+.main {
+    margin-left: 280px; /* เท่ากับความกว้าง Sidebar */
+    padding: 30px;
+}
+
+/* 4. Header Section (แบบ full_form.php) */
+.header-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    background-color: #4a559d; /* สีจาก navbar-custom เดิม */
+    color: white;
+    padding: 20px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(74, 85, 157, 0.3);
+}
+
+.header-section .icon-container {
+    font-size: 2.5rem;
+    margin-right: 20px;
+    line-height: 1;
+}
+
+.header-section .title-container {
+    flex-grow: 1;
+}
+
+.header-section h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+/* 5. Section Title (แบบ full_form.php) */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4a559d;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    margin-right: 12px;
+    font-size: 1.4rem;
+}
+
+/* 6. Form Elements Styling */
+.form-label {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 0.375rem; /* 6px */
+}
+.form-control:focus, .form-select:focus {
+    border-color: #4a559d;
+    box-shadow: 0 0 0 0.25rem rgba(74, 85, 157, 0.25);
+}
+
+/* 7. Button Styling (ให้เหมือน full_form.php) */
+.btn-primary {
+    background-color: #4a559d;
+    border-color: #4a559d;
+}
+.btn-primary:hover {
+    background-color: #3b4681;
+    border-color: #3b4681;
+}
+
+.btn-outline-primary {
+    border-color: #4a559d;
+    color: #4a559d;
+}
+.btn-outline-primary:hover {
+    background-color: #4a559d;
+    color: white;
+}
+
+/* 8. Required Mark */
+.required-mark {
+    color: red;
+    font-weight: bold;
+    margin-left: 2px;
+}
