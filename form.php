@@ -161,7 +161,8 @@ function dt($field, $type)
                         <label class="form-label">วันเกิด</label>
 
                         <input type="text" class="form-control" id="display_date" name="birthdate_show"
-                            value="<?= val('birthdate') ?>" placeholder="วว/ดด/ปปปป" readonly>
+                            value="<?= dt('birthdate', 'd') ? date('d/m/Y', strtotime(dt('birthdate', 'd') . ' +543 years')) : '' ?>"
+                            placeholder="วว/ดด/ปปปป (ปีไทย)">
 
                         <input type="hidden" id="birthdate_db" name="birthdate" value="<?= dt('birthdate', 'd') ?>">
                     </div>
@@ -171,7 +172,7 @@ function dt($field, $type)
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">กรุ๊ปเลือด</label>
-                        <input type="enum" class="form-control" id="display_blood_type" name="blood_type" value="<?= val('blood_type') ?>" placeholder="...">
+                        <input type="text" class="form-control" id="display_blood_type" name="blood_type" value="<?= val('blood_type') ?>" placeholder="...">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">อายุ</label>
@@ -654,14 +655,17 @@ function dt($field, $type)
                                 displayDate.value = p.bdate || '';
                                 displayBT.value = p.bgname || '';
 
-                                // 2. แปลงเป็น YYYY-MM-DD ลงในช่องที่ซ่อนอยู่ (birthdate_db)
-                                // 2. [สำคัญ] แปลงเป็น YYYY-MM-DD เพื่อยัดใส่ช่องซ่อน (Hidden Input)
-                                if (p.bdate) {
-                                    // เรียกฟังก์ชันแปลง (ดูฟังก์ชันด้านล่าง)
-                                    document.getElementById('birthdate_db').value = convertThaiDateToMySQL(p.bdate);
-                                } else {
-                                    document.getElementById('birthdate_db').value = '';
-                                }
+                                // ใหม่
+if (p.bdate) {
+    // เรียกฟังก์ชันใหม่ที่รองรับภาษาไทย
+    const mysqlDate = convertThaiTextToMySQL(p.bdate);
+    document.getElementById('birthdate_db').value = mysqlDate;
+    
+    // (Optional) เช็คใน Console ดูว่าแปลงถูกไหม
+    console.log(`Original: ${p.bdate} -> Converted: ${mysqlDate}`);
+} else {
+    document.getElementById('birthdate_db').value = '';
+}
                             } else {
                                 Swal.fire('Error', 'ไม่พบข้อมูลผู้ป่วย', 'error');
                             }
@@ -673,28 +677,48 @@ function dt($field, $type)
                 });
             }
 
-            // ฟังก์ชันแปลง "31/01/2567" -> "2024-01-31"
-            function convertThaiDateToMySQL(thaiDateString) {
-                if (!thaiDateString) return "";
+            // ฟังก์ชันแปลง "30 กรกฎาคม 2521" -> "1978-07-30"
+function convertThaiTextToMySQL(thaiDateStr) {
+    if (!thaiDateStr) return "";
 
-                // สมมติว่า API ส่งมาเป็น "31/01/2567" (คั่นด้วย /)
-                const parts = thaiDateString.split('/');
+    // ตัดช่องว่างหน้าหลัง และแยกคำด้วยช่องว่าง (Space)
+    const parts = thaiDateStr.trim().split(/\s+/); 
 
-                if (parts.length === 3) {
-                    const day = parts[0];
-                    const month = parts[1];
-                    const yearThai = parseInt(parts[2]);
+    // ถ้าแยกแล้วไม่ได้ 3 ส่วน (วัน เดือน ปี) ให้จบการทำงาน
+    if (parts.length !== 3) return "";
 
-                    // ลบ 543 เพื่อเป็น ค.ศ.
-                    const yearEng = yearThai - 543;
+    let day = parts[0];
+    let monthStr = parts[1];
+    let yearThai = parseInt(parts[2]);
 
-                    // คืนค่า format ที่ Database ชอบ
-                    return `${yearEng}-${month}-${day}`;
-                }
+    // สร้างตารางเทียบชื่อเดือนไทย
+    const thaiMonths = [
+        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+    ];
 
-                // กันเหนียว: ถ้า format ไม่ตรงที่คิดไว้ ให้ส่งค่าเดิมกลับไป
-                return thaiDateString;
-            }
+    // หา index ของเดือน (เริ่มที่ 0)
+    let monthIndex = thaiMonths.indexOf(monthStr);
+
+    // ถ้าไม่เจอชื่อเดือน ให้ลองหาแบบย่อ (เผื่อ API ส่ง ก.ค. มา)
+    if (monthIndex === -1) {
+         const thaiMonthsShort = [
+            "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
+            "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+        ];
+        monthIndex = thaiMonthsShort.indexOf(monthStr);
+    }
+
+    if (monthIndex === -1) return ""; // ยังไม่เจออีก ก็ยอมแพ้
+
+    // แปลงเป็นตัวเลข
+    let month = (monthIndex + 1).toString().padStart(2, '0'); // แปลง 1 -> "01"
+    day = day.toString().padStart(2, '0');                    // แปลง 5 -> "05"
+    let yearEng = yearThai - 543;                             // ลบ 543
+
+    // คืนค่า YYYY-MM-DD
+    return `${yearEng}-${month}-${day}`;
+}
         });
     </script>
 

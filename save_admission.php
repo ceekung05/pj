@@ -14,7 +14,48 @@ function combineDateTime($date, $time) {
     }
     return null;
 }
+// 
+    // ฟังก์ชันแปลงวันที่ไทย (รองรับทั้ง dd/mm/yyyy และ "30 กรกฎาคม 2567")
+function convertThaiDateToMySQL($dateString) {
+    if (empty($dateString)) return null;
 
+    $dateString = trim($dateString);
+
+    // 1. กรณีเป็นรูปแบบ Slash (31/01/2567)
+    if (strpos($dateString, '/') !== false) {
+        $parts = explode('/', $dateString);
+        if (count($parts) == 3) {
+            $d = $parts[0];
+            $m = $parts[1];
+            $y = (int)$parts[2] - 543; // ลบปีไทย
+            return "$y-$m-$d";
+        }
+    }
+
+    // 2. กรณีเป็นภาษาไทย (30 กรกฎาคม 2521)
+    $thaiMonths = [
+        'มกราคม'=>'01', 'กุมภาพันธ์'=>'02', 'มีนาคม'=>'03', 'เมษายน'=>'04', 'พฤษภาคม'=>'05', 'มิถุนายน'=>'06',
+        'กรกฎาคม'=>'07', 'สิงหาคม'=>'08', 'กันยายน'=>'09', 'ตุลาคม'=>'10', 'พฤศจิกายน'=>'11', 'ธันวาคม'=>'12',
+        'ม.ค.'=>'01', 'ก.พ.'=>'02', 'มี.ค.'=>'03', 'เม.ย.'=>'04', 'พ.ค.'=>'05', 'มิ.ย.'=>'06',
+        'ก.ค.'=>'07', 'ส.ค.'=>'08', 'ก.ย.'=>'09', 'ต.ค.'=>'10', 'พ.ย.'=>'11', 'ธ.ค.'=>'12'
+    ];
+
+    // แยกคำด้วยช่องว่าง (Space)
+    $parts = preg_split('/\s+/', $dateString);
+    if (count($parts) == 3) {
+        $d = str_pad($parts[0], 2, '0', STR_PAD_LEFT); // เติม 0 ข้างหน้า
+        $mStr = $parts[1];
+        $y = (int)$parts[2] - 543;
+
+        if (isset($thaiMonths[$mStr])) {
+            $m = $thaiMonths[$mStr];
+            return "$y-$m-$d";
+        }
+    }
+
+    return null; // แปลงไม่ได้จริงๆ
+}
+// 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // =================================================================
@@ -25,17 +66,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_card = $_POST['id_card'] ?? null;
     $flname = $_POST['flname'] ?? null;
     // รับวันเกิดจาก Hidden Field ที่แปลงเป็น YYYY-MM-DD แล้ว (จาก JS)
-    $birthdate = $_POST['birthdate'] ?? null; 
-    // >>>> วางโค้ดที่ผมให้ ตรงนี้เลยครับ <<<<
-    if ($birthdate && strpos($birthdate, '/') !== false) {
-        $parts = explode('/', $birthdate);
+    // ในไฟล์ save_admission.php (ส่วน PART 1)
+// หาบรรทัด $birthdate = $_POST['birthdate'] ?? null; แล้วเปลี่ยนเป็นชุดนี้ครับ:
+
+// --- แก้ไขใหม่: รับวันเกิดแบบฉลาด (รองรับทุกท่า) ---
+    // 1. ลองดูใน Hidden Field ก่อน (เผื่อ JS ทำงานถูกต้อง)
+    $birthdate = !empty($_POST['birthdate']) ? $_POST['birthdate'] : null;
+
+    // 2. ถ้า Hidden ไม่มี หรือเป็น 0000-00-00 ให้ไปเอาจากช่องโชว์ แล้วให้ PHP แปลงเอง
+    if (empty($birthdate) || $birthdate == '0000-00-00') {
+        if (!empty($_POST['birthdate_show'])) {
+            // เรียกฟังก์ชันเทพที่เราเพิ่งสร้าง
+            $birthdate = convertThaiDateToMySQL($_POST['birthdate_show']);
+        }
+    }
+
+    // 3. กันเหนียว ถ้าสุดท้ายยังว่าง ให้เป็น NULL
+    if (empty($birthdate)) $birthdate = null;
+
+// 2. ถ้า Hidden ว่าง (กรณีกรอกมือ หรือ แก้ไข) ให้ไปเอาจากช่องโชว์ (birthdate_show)
+if (empty($birthdate) && !empty($_POST['birthdate_show'])) {
+    $temp_date = $_POST['birthdate_show'];
+    // เช็คว่ามีเครื่องหมาย / หรือไม่ (เช่น 31/01/2567)
+    if (strpos($temp_date, '/') !== false) {
+        $parts = explode('/', $temp_date);
         if (count($parts) == 3) {
             $d = $parts[0];
             $m = $parts[1];
+            // ลบ 543 เพื่อแปลงปีไทยเป็นคริสต์ศักราช
             $y_eng = (int)$parts[2] - 543; 
             $birthdate = "$y_eng-$m-$d";
         }
     }
+}
+
+// ถ้าสุดท้ายยังเป็นค่าว่าง ให้ส่ง NULL เข้า Database (เพื่อไม่ให้เป็น 0000-00-00 แบบผิดๆ)
+if (empty($birthdate)) {
+    $birthdate = null;
+}
     $gender = $_POST['gender'] ?? null;
     $age = $_POST['age'] ?? null; // อายุอาจจะไม่ต้องเก็บลง DB เพราะคำนวณจากวันเกิดได้ แต่ถ้าจะเก็บก็เพิ่มได้
     $blood_type = $_POST['blood_type'] ?? null;
